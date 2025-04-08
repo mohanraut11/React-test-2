@@ -1,4 +1,5 @@
 // components/UserForm.tsx
+'use client';
 import React, { useState, useEffect } from 'react';
 import { UserFormData } from '../types/types';
 
@@ -21,7 +22,6 @@ const UserForm: React.FC<UserFormProps> = ({
     location: '',
     isActive: false,
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -30,17 +30,16 @@ const UserForm: React.FC<UserFormProps> = ({
     }
   }, [initialData]);
 
-  const validate = (): boolean => {
+  const validate = () => {
     const newErrors: Record<string, string> = {};
-
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = 'Invalid email format';
     if (!formData.department.trim())
       newErrors.department = 'Department is required';
-    if (!formData.location.trim()) newErrors.location = 'Location is required';
-
+    if (!formData.location.trim())
+      newErrors.location = 'Location is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -48,9 +47,7 @@ const UserForm: React.FC<UserFormProps> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-
+    const { name, value, type, checked } = e.target as HTMLInputElement;
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -59,133 +56,136 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      onSubmit(formData);
-    }
+    if (validate()) onSubmit(formData);
   };
 
   return (
-    <div className='max-w-full sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow'>
-      <h2 className='text-xl font-semibold mb-4'>
+    <div className="max-w-full sm:max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg font-sans">
+      <h2
+        className="text-3xl font-bold mb-6 bg-gradient-to-r from-[#405DE6] via-[#833AB4] to-[#FD1D1D]
+                   bg-clip-text text-transparent tracking-tight"
+      >
         {initialData?.id ? 'Edit User' : 'Add New User'}
       </h2>
-      <form onSubmit={handleSubmit} className='space-y-4'>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Name */}
         <div>
-          <label className='block text-sm font-medium text-gray-700'>
+          <label className="block text-sm font-medium text-gray-700">
             Name
           </label>
           <input
-            type='text'
-            name='name'
+            type="text"
+            name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`mt-1 block w-full p-2 border rounded ${
-              errors.name ? 'border-red-500' : ''
-            }`}
+            className={`mt-1 w-full p-3 rounded-xl border ${
+              errors.name ? 'border-red-500' : 'border-gray-300'
+            } bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition`}
           />
           {errors.name && (
-            <p className='mt-1 text-sm text-red-600'>{errors.name}</p>
+            <p className="mt-1 text-xs text-red-600">{errors.name}</p>
           )}
         </div>
 
+        {/* Email */}
         <div>
-          <label className='block text-sm font-medium text-gray-700'>
+          <label className="block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
-            type='email'
-            name='email'
+            type="email"
+            name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`mt-1 block w-full p-2 border rounded ${
-              errors.email ? 'border-red-500' : ''
-            }`}
+            className={`mt-1 w-full p-3 rounded-xl border ${
+              errors.email ? 'border-red-500' : 'border-gray-300'
+            } bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition`}
           />
           {errors.email && (
-            <p className='mt-1 text-sm text-red-600'>{errors.email}</p>
+            <p className="mt-1 text-xs text-red-600">{errors.email}</p>
           )}
         </div>
 
+        {/* Role */}
         <div>
-          <label className='block text-sm font-medium text-gray-700'>
+          <label className="block text-sm font-medium text-gray-700">
             Role
           </label>
           <select
-            name='role'
+            name="role"
             value={formData.role}
             onChange={handleChange}
-            className='mt-1 block w-full p-2 border rounded'
+            className="mt-1 w-full p-3 rounded-xl border border-gray-300 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
           >
-            <option value='Admin'>Admin</option>
-            <option value='Editor'>Editor</option>
-            <option value='Viewer'>Viewer</option>
+            <option>Admin</option>
+            <option>Editor</option>
+            <option>Viewer</option>
           </select>
         </div>
 
+        {/* Department */}
         <div>
-          <label className='block text-sm font-medium text-gray-700'>
+          <label className="block text-sm font-medium text-gray-700">
             Department
           </label>
           <input
-            type='text'
-            name='department'
+            type="text"
+            name="department"
             value={formData.department}
             onChange={handleChange}
-            className={`mt-1 block w-full p-2 border rounded ${
-              errors.department ? 'border-red-500' : ''
-            }`}
+            className={`mt-1 w-full p-3 rounded-xl border ${
+              errors.department ? 'border-red-500' : 'border-gray-300'
+            } bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition`}
           />
           {errors.department && (
-            <p className='mt-1 text-sm text-red-600'>{errors.department}</p>
+            <p className="mt-1 text-xs text-red-600">{errors.department}</p>
           )}
         </div>
 
+        {/* Location */}
         <div>
-          <label className='block text-sm font-medium text-gray-700'>
+          <label className="block text-sm font-medium text-gray-700">
             Location
           </label>
           <input
-            type='text'
-            name='location'
+            type="text"
+            name="location"
             value={formData.location}
             onChange={handleChange}
-            className={`mt-1 block w-full p-2 border rounded ${
-              errors.location ? 'border-red-500' : ''
-            }`}
+            className={`mt-1 w-full p-3 rounded-xl border ${
+              errors.location ? 'border-red-500' : 'border-gray-300'
+            } bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition`}
           />
           {errors.location && (
-            <p className='mt-1 text-sm text-red-600'>{errors.location}</p>
+            <p className="mt-1 text-xs text-red-600">{errors.location}</p>
           )}
         </div>
 
-        <div className='flex items-center'>
+        {/* Active */}
+        <div className="flex items-center space-x-2">
           <input
-            type='checkbox'
-            id='isActive'
-            name='isActive'
+            type="checkbox"
+            name="isActive"
             checked={formData.isActive}
             onChange={handleChange}
-            className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+            className="h-5 w-5 text-pink-500 focus:ring-pink-500 border-gray-300 rounded"
           />
-          <label
-            htmlFor='isActive'
-            className='ml-2 block text-sm text-gray-700'
-          >
-            Active User
-          </label>
+          <label className="text-sm text-gray-700">Active User</label>
         </div>
 
-        <div className='flex justify-end space-x-3 pt-4'>
+        {/* Buttons */}
+        <div className="flex justify-end space-x-4 pt-4">
           <button
-            type='button'
+            type="button"
             onClick={onCancel}
-            className='px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50'
+            className="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition"
           >
             Cancel
           </button>
           <button
-            type='submit'
-            className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700'
+            type="submit"
+            className="px-5 py-2 text-sm font-medium text-white rounded-xl
+                       bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 transition"
           >
             {initialData?.id ? 'Update' : 'Create'} User
           </button>

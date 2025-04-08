@@ -1,4 +1,3 @@
-// components/TodoForm.tsx
 'use client';
 import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
@@ -27,31 +26,36 @@ export default function TodoForm({ onSubmit }: TodoFormProps) {
 
   return (
     <div
-      className={`p-4 rounded-lg ${
-        theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+      className={`p-6 rounded-2xl shadow-md transition-all ease-in-out ${
+        theme === 'dark' ? 'bg-[#1c1c1e] text-white' : 'bg-white text-gray-800'
       }`}
     >
-      <h2 className='text-lg font-semibold mb-4'>Add New Task</h2>
-      <form onSubmit={handleSubmit} className='space-y-4'>
+      <h2 className='text-xl font-semibold mb-4 font-sans tracking-wide'>
+        Add New Task
+      </h2>
+      <form onSubmit={handleSubmit} className='space-y-6 font-sans'>
+        {/* Task Title Input */}
         <div>
           <input
             type='text'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder='Task title'
-            className={`w-full p-2 border rounded ${
-              theme === 'dark'
-                ? 'bg-gray-600 border-gray-500 text-white'
-                : 'bg-white border-gray-300'
-            }`}
+            placeholder='What do you need to do?'
+            className={`w-full p-4 text-sm rounded-xl outline-none focus:ring-2 transition-all
+              ${
+                theme === 'dark'
+                  ? 'bg-[#2c2c2e] border border-[#3a3a3c] text-white focus:ring-pink-500'
+                  : 'bg-gray-50 border border-gray-300 focus:ring-pink-500'
+              }`}
             required
           />
         </div>
 
+        {/* Due Date Input */}
         <div>
           <label
-            className={`block mb-1 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            className={`block mb-1 text-sm ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}
           >
             Due Date
@@ -60,18 +64,20 @@ export default function TodoForm({ onSubmit }: TodoFormProps) {
             type='date'
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className={`w-full p-2 border rounded ${
-              theme === 'dark'
-                ? 'bg-gray-600 border-gray-500 text-white'
-                : 'bg-white border-gray-300'
-            }`}
+            className={`w-full p-4 text-sm rounded-xl outline-none focus:ring-2 transition-all
+              ${
+                theme === 'dark'
+                  ? 'bg-[#2c2c2e] border border-[#3a3a3c] text-white focus:ring-orange-400'
+                  : 'bg-gray-50 border border-gray-300 focus:ring-orange-400'
+              }`}
           />
         </div>
 
-        <div>
+        {/* Priority Dropdown */}
+        <div className="relative">
           <label
-            className={`block mb-1 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            className={`block mb-1 text-sm ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}
           >
             Priority
@@ -81,21 +87,23 @@ export default function TodoForm({ onSubmit }: TodoFormProps) {
             onChange={(e) =>
               setPriority(e.target.value as 'low' | 'medium' | 'high')
             }
-            className={`w-full p-2 border rounded ${
-              theme === 'dark'
-                ? 'bg-gray-600 border-gray-500 text-white'
-                : 'bg-white border-gray-300'
-            }`}
+            className={`w-full p-4 text-sm rounded-xl outline-none focus:ring-2 transition-all
+              ${
+                theme === 'dark'
+                  ? 'bg-[#2c2c2e] border border-[#3a3a3c] text-white focus:ring-purple-400'
+                  : 'bg-gray-50 border border-gray-300 focus:ring-purple-400'
+              }`}
           >
-            <option value='low'>Low</option>
-            <option value='medium'>Medium</option>
-            <option value='high'>High</option>
+            <option value='low'>whenever</option>
+            <option value='medium'>Soon</option>
+            <option value='high'>ASAP</option>
           </select>
         </div>
 
+        {/* Submit Button */}
         <button
           type='submit'
-          className='w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700'
+          className='w-full py-3 font-semibold text-white rounded-xl shadow-md transition-all bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500'
         >
           Add Task
         </button>

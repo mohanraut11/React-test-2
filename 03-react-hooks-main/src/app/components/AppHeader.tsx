@@ -1,4 +1,3 @@
-// components/AppHeader.tsx
 'use client';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -21,68 +20,90 @@ export default function AppHeader({
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
 
-  const handleLogin = () => {
-    router.push('/login');
-  };
-
-  const handleLogout = async () => {
-    await logout();
-  };
-
-  const navigateTo = (page: 'dashboard' | 'todo') => {
+  const handleLogin = () => router.push('/login');
+  const handleLogout = async () => await logout();
+  const navigateTo = (page: 'dashboard' | 'todo') =>
     router.push(page === 'dashboard' ? '/' : '/todo');
-  };
 
   return (
     <header
-      className={`flex items-center justify-between p-4 border-b ${
-        theme === 'dark'
-          ? 'border-gray-700 bg-gray-800'
-          : 'border-gray-200 bg-white'
-      }`}
+      className={`flex items-center justify-between px-6 py-4 border-b transition-colors
+        ${theme === 'dark' ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}
+      `}
     >
-      <h1 className='text-xl font-bold'>
-        {currentPage === 'dashboard' ? 'User Dashboard' : 'Todo App'}
+      {/* Title + Mode Indicator */}
+      <h1
+        className={`text-2xl font-semibold flex items-center space-x-3 tracking-tight
+          ${theme === 'dark' ? 'text-white' : 'bg-gradient-to-r from-[#405DE6] via-[#833AB4] to-[#FD1D1D] bg-clip-text text-transparent'}
+        `}
+      >
+        <span className="text-3xl">
+          {theme === 'dark' ? '🌙' : '🌞'}
+        </span>
+        <span
+          style={{ fontFamily: "'Brush Script MT', cursive" }}
+          className="text-3xl"
+        >
+          {currentPage === 'dashboard'
+            ? theme === 'dark'
+              ? 'Dashboard - Dark Mode'
+              : 'Dashboard - Light Mode'
+            : theme === 'dark'
+              ? 'Todo - Dark Mode'
+              : 'Todo - Light Mode'}
+        </span>
       </h1>
 
-      <div className='flex items-center space-x-4'>
+      <div className="flex items-center space-x-4">
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className={`p-2 rounded-full ${
-            theme === 'dark'
-              ? 'bg-gray-700 text-yellow-300'
-              : 'bg-gray-200 text-gray-700'
-          }`}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          className="p-2 rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
         >
-          {theme === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
+          {theme === 'dark' ? (
+            <FiSun size={20} className="text-white" />
+          ) : (
+            <FiMoon size={20} className="text-black" />
+          )}
         </button>
 
         {/* Navigation */}
         {currentPage === 'dashboard' ? (
           <button
             onClick={() => navigateTo('todo')}
-            className={`flex items-center space-x-1 px-3 py-2 rounded-lg ${
-              theme === 'dark'
-                ? 'bg-indigo-700 hover:bg-indigo-600'
-                : 'bg-indigo-600 hover:bg-indigo-500'
-            } text-white`}
+            className="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors
+                       hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <FiCheckCircle size={16} />
-            <span>Todo App</span>
+            <FiCheckCircle
+              size={18}
+              className={theme === 'dark' ? 'text-white' : 'text-black'}
+            />
+            <span
+              className={`font-sans font-medium ${
+                theme === 'dark' ? 'text-white' : 'text-black'
+              }`}
+            >
+              Todo App
+            </span>
           </button>
         ) : (
           <button
             onClick={() => navigateTo('dashboard')}
-            className={`flex items-center space-x-1 px-3 py-2 rounded-lg ${
-              theme === 'dark'
-                ? 'bg-gray-700 hover:bg-gray-600'
-                : 'bg-gray-200 hover:bg-gray-300'
-            }`}
+            className="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors
+                       hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <FiList size={16} />
-            <span>Dashboard</span>
+            <FiList
+              size={18}
+              className={theme === 'dark' ? 'text-white' : 'text-black'}
+            />
+            <span
+              className={`font-sans font-medium ${
+                theme === 'dark' ? 'text-white' : 'text-black'
+              }`}
+            >
+              Dashboard
+            </span>
           </button>
         )}
 
@@ -90,25 +111,21 @@ export default function AppHeader({
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
-            className={`flex items-center space-x-1 px-3 py-2 rounded-lg ${
-              theme === 'dark'
-                ? 'bg-red-700 hover:bg-red-600'
-                : 'bg-red-600 hover:bg-red-500'
-            } text-white`}
+            className="flex items-center space-x-1 px-3 py-2 rounded-lg
+                       bg-gradient-to-r from-pink-500 to-yellow-400 text-white font-medium
+                       hover:from-pink-600 hover:to-yellow-500 transition-colors"
           >
-            <FiLogOut size={16} />
+            <FiLogOut size={18} />
             <span>Logout</span>
           </button>
         ) : (
           <button
             onClick={handleLogin}
-            className={`flex items-center space-x-1 px-3 py-2 rounded-lg ${
-              theme === 'dark'
-                ? 'bg-green-700 hover:bg-green-600'
-                : 'bg-green-600 hover:bg-green-500'
-            } text-white`}
+            className="flex items-center space-x-1 px-3 py-2 rounded-lg
+                       bg-gradient-to-r from-pink-500 to-yellow-400 text-white font-medium
+                       hover:from-pink-600 hover:to-yellow-500 transition-colors"
           >
-            <FiLogIn size={16} />
+            <FiLogIn size={18} />
             <span>Login</span>
           </button>
         )}

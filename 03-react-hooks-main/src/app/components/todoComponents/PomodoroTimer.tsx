@@ -1,94 +1,114 @@
-// components/PomodoroTimer.tsx
 'use client';
-import { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../../context/ThemeContext';
+import { useState, useEffect } from 'react';
 
-export default function PomodoroTimer() {
-  const { theme } = useTheme();
-  const [mode, setMode] = useState<'work' | 'break'>('work');
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes
+export default function TodoApp() {
+  const [todos, setTodos] = useState<string[]>([]);
+  const [input, setInput] = useState('');
+  const [activeTab, setActiveTab] = useState<'list' | 'calendar'>('list');
+  const [timer, setTimer] = useState(1500); // 25 minutes in seconds
   const [isActive, setIsActive] = useState(false);
-  const [cycles, setCycles] = useState(0);
 
-  const resetTimer = useCallback(() => {
-    setIsActive(false);
-    setTimeLeft(mode === 'work' ? 25 * 60 : 5 * 60);
-  }, [mode]);
-
+  // Timer Logic
   useEffect(() => {
-    resetTimer();
-  }, [mode, resetTimer]);
+    let interval: NodeJS.Timeout | null = null;
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isActive && timeLeft > 0) {
+    if (isActive && timer > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimer((prev) => prev - 1);
       }, 1000);
-    } else if (isActive && timeLeft === 0) {
+    } else if (timer === 0) {
+      alert("Pomodoro session complete!");
       setIsActive(false);
-      const newMode = mode === 'work' ? 'break' : 'work';
-      setMode(newMode);
-      if (mode === 'work') {
-        setCycles((prev) => prev + 1);
-      }
-      new Audio('/notification.mp3').play().catch(console.error);
     }
 
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft, mode]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive, timer]);
 
-  const toggleTimer = () => {
-    setIsActive(!isActive);
+  const addTodo = () => {
+    if (input.trim()) {
+      setTodos([...todos, input.trim()]);
+      setInput('');
+    }
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs
-      .toString()
-      .padStart(2, '0')}`;
+  const removeTodo = (index: number) => {
+    setTodos(todos.filter((_, i) => i !== index));
+  };
+
+  const resetTimer = () => {
+    setTimer(1500); // Reset to 25 minutes
+    setIsActive(false);
+  };
+
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
   return (
-    <div
-      className={`p-4 rounded-lg ${
-        theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
-      }`}
-    >
-      <h2 className='text-lg font-semibold mb-4'>Pomodoro Timer</h2>
-      <div className='text-center mb-4'>
-        <div
-          className={`text-4xl font-bold mb-2 ${
-            mode === 'work' ? 'text-red-500' : 'text-green-500'
-          }`}
-        >
-          {formatTime(timeLeft)}
+    <div className="max-w-md mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white shadow-lg rounded-2xl p-6">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-4 tracking-tight">Todo App</h1>
+
+        {/* Todo Input and List */}
+        <div className="flex flex-col gap-2 mb-4">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Add a new task"
+            className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={addTodo}
+            className="w-fit px-4 py-2 bg-[#1877f2] text-white font-medium rounded-xl hover:bg-[#155fc5] transition"
+          >
+            Add
+          </button>
         </div>
-        <div className='text-sm'>
-          {mode === 'work' ? 'Work Time' : 'Break Time'} • Cycle: {cycles}
+
+        {/* Pomodoro Timer */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">Pomodoro Timer</h2>
+          <div className="text-3xl font-bold text-center mb-3">
+            {formatTime(timer)}
+          </div>
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => setIsActive(!isActive)}
+              className={`px-6 py-2 rounded-xl text-white font-medium transition ${isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+            >
+              {isActive ? 'Pause' : 'Start'}
+            </button>
+            <button
+              onClick={resetTimer}
+              className="px-6 py-2 bg-gray-400 text-white font-medium rounded-xl hover:bg-gray-500 transition"
+            >
+              Reset
+            </button>
+          </div>
         </div>
-      </div>
-      <div className='flex justify-center space-x-4'>
-        <button
-          onClick={toggleTimer}
-          className={`px-4 py-2 rounded-lg ${
-            isActive ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
-          }`}
-        >
-          {isActive ? 'Pause' : 'Start'}
-        </button>
-        <button
-          onClick={() => setMode(mode === 'work' ? 'break' : 'work')}
-          className={`px-4 py-2 rounded-lg ${
-            theme === 'dark'
-              ? 'bg-gray-600 text-white'
-              : 'bg-gray-300 text-gray-700'
-          }`}
-        >
-          Switch Mode
-        </button>
+
+        {/* Todo List */}
+        <ul className="space-y-3">
+          {todos.map((todo, index) => (
+            <li
+              key={index}
+              className="flex items-center justify-between bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl"
+            >
+              <span className="text-gray-800 text-base">{todo}</span>
+              <button
+                onClick={() => removeTodo(index)}
+                className="text-sm text-red-500 hover:text-red-600 transition"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
